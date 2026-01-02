@@ -4,11 +4,33 @@ vim.g.maplocalleader = "\\"
 
 local opt = vim.opt
 
+if vim.env.SSH_TTY then
+  -- Remote: copy to *local* clipboard via terminal (OSC52)
+  local osc52 = require("vim.ui.clipboard.osc52")
+
+  vim.g.clipboard = {
+    name = "OSC52",
+    copy = {
+      ["+"] = osc52.copy("+"),
+      ["*"] = osc52.copy("*"),
+    },
+    -- OSC52 is effectively one-way; paste should be your normal terminal paste.
+    paste = {
+      ["+"] = function() return {} end,
+      ["*"] = function() return {} end,
+    },
+  }
+
+  -- Optional: make *all* yanks go to clipboard over SSH
+  opt.clipboard = "unnamedplus"
+else
+  -- Local machine: normal system clipboard integration
+  opt.clipboard = "unnamedplus"
+end
+
 opt.wrap = true
 opt.autowrite = true -- Enable auto write
--- only set clipboard if not in ssh, to make sure the OSC 52
--- integration works automatically. Requires Neovim >= 0.10.0
-opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
+
 opt.completeopt = "menu,menuone,noselect"
 opt.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with substitutions
 opt.confirm = true -- Confirm to save changes before exiting modified buffer
@@ -64,4 +86,3 @@ opt.winminwidth = 5 -- Minimum window width
 
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
-
