@@ -8,7 +8,12 @@ return {
   opts = {},
   keys = {
 		{ "<leader>ff", function()
-			require("fzf-lua").files( {cwd = root() })
+			require("fzf-lua").git_files( {cwd = root() })
 		end , desc = "Find Files (git-files)" },
+    { "<leader>/",
+			function()
+				require("fzf-lua").live_grep({ cwd = root() })
+			end
+    },
 	}
 }
