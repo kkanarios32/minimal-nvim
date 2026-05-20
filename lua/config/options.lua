@@ -3,30 +3,21 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 local opt = vim.opt
+local osc52 = require("vim.ui.clipboard.osc52")
 
-if vim.env.SSH_TTY then
-  -- Remote: copy to *local* clipboard via terminal (OSC52)
-  local osc52 = require("vim.ui.clipboard.osc52")
+vim.g.clipboard = {
+  name = "OSC52",
+  copy = {
+    ["+"] = osc52.copy("+"),
+    ["*"] = osc52.copy("*"),
+  },
+  paste = {
+    ["+"] = osc52.paste("+"),
+    ["*"] = osc52.paste("*"),
+  },
+}
 
-  vim.g.clipboard = {
-    name = "OSC52",
-    copy = {
-      ["+"] = osc52.copy("+"),
-      ["*"] = osc52.copy("*"),
-    },
-    -- OSC52 is effectively one-way; paste should be your normal terminal paste.
-    paste = {
-      ["+"] = function() return {} end,
-      ["*"] = function() return {} end,
-    },
-  }
-
-  -- Optional: make *all* yanks go to clipboard over SSH
-  opt.clipboard = "unnamedplus"
-else
-  -- Local machine: normal system clipboard integration
-  opt.clipboard = "unnamedplus"
-end
+vim.opt.clipboard = ""  -- or just delete any clipboard setting lines
 
 opt.wrap = true
 opt.autowrite = true -- Enable auto write
@@ -86,3 +77,6 @@ opt.winminwidth = 5 -- Minimum window width
 
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
+
+-- Stop log file from blowing up
+vim.lsp.set_log_level("error")
