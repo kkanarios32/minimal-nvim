@@ -13,6 +13,9 @@ return { -- Highlight, edit, and navigate code
 			"vim",
 			"vimdoc",
 			"python",
+			"markdown",
+			"markdown_inline",
+			"json",
 		},
 		-- Autoinstall languages that are not installed
 		auto_install = true,
